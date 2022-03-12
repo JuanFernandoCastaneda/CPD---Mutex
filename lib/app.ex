@@ -147,10 +147,8 @@ defmodule App do
   The parameter is the id of the service to take.
   """    
   def choose_service(id) do
-    lock_requests = Mutex.await(MyMutex, @current_requests)
-    new_service = Agent.get(@current_requests, fn requests -> requests end)
+    new_service = update_and_get_requests()
     |> Enum.find(fn request -> request[:id] == id end)
-    Mutex.release(MyMutex, lock_requests)
 
     cond do
       update_and_get_current_service() != nil ->
